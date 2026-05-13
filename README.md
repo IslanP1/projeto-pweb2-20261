@@ -32,6 +32,8 @@ Requisitos a serem implementados:
 
 ## Sobre a entrega
 
+Cada grupo deve trabalhar em seu próprio repositório, criando um _fork_ deste repositório principal. Cada equipe decide como organizar o seu próprio fluxo de trabalho com git.
+
 A entrega deve ser feita por meio de um _Pull Request_ para este repositório, contendo na descrição o nome do grupo.
 
 - Não serão aceitas entregas por outros meios ou fora do prazo.
