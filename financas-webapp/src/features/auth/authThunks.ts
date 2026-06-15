@@ -23,7 +23,4 @@ const register = createAsyncThunk(
     }
 );
 
-export const authThunks = {
-    login,
-    register
-};
+export { login, register };
