@@ -37,22 +37,28 @@ export default function Login() {
     }
 
     return (
-        <div>
+        <form onSubmit={async (e) => {
+            e.preventDefault();
+            await handleSubmit();
+        }}>
             <input
                 placeholder="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                required
             />
             <input
+                type="password"
                 placeholder="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
             />
-            <button onClick={handleSubmit} disabled={isLoading}>
+            <button type="submit" disabled={isLoading}>
                 {buttonText}
             </button>
 
             {errorMessage}
-        </div>
+        </form>
     );
 }
