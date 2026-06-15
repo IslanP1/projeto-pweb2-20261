@@ -9,12 +9,23 @@ const create = createAsyncThunk(
         try {
             const token = (getState() as RootState).auth.token;
             return await transactionService.create(data, token!);
-        } catch (e) {   
+        } catch (e) {
             return rejectWithValue((e as Error).message);
         }
     }
 );
 
-export {
-    create,
-};
+const fetchTransactions = createAsyncThunk(
+    'transactions/fetch',
+    async (page: number, { getState, rejectWithValue }) => {
+        try {
+            const token = (getState() as RootState).auth.token;
+            return await transactionService.fetchAll(page, token!);
+        } catch (e) {
+            return rejectWithValue((e as Error).message);
+        }
+    }
+);
+
+
+export { create, fetchTransactions };
