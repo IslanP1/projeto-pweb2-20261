@@ -4,7 +4,7 @@ import type { CreateTransactionDto } from "./transactionService";
 import type { RootState } from '../../app/store';
 
 const create = createAsyncThunk(
-    'transactions',
+    'transactions/create',
     async (data: CreateTransactionDto, { getState, rejectWithValue }) => {
         try {
             const token = (getState() as RootState).auth.token;
