@@ -38,12 +38,16 @@ const authSlice = createSlice({
             state.error = null;
         };
 
-        const handleFulfilled = (state: AuthState, action: { payload:  AuthResponse }) => {
-            const { token, id, username, name } = action.payload;
+        const handleLoginFulfilled = (state: AuthState, action: { payload: AuthResponse }) => {
+            const { id, token, username, name } = action.payload;
             state.status = 'succeeded';
             state.token = token;
             state.user = { id, username, name };
             localStorage.setItem('token', token);
+        };
+
+        const handleRegisterFulfilled = (state: AuthState) => {
+            state.status = 'succeeded';
         };
 
         const handleRejected = (state: AuthState, action: { payload: unknown}) => {
@@ -53,10 +57,10 @@ const authSlice = createSlice({
 
         builder
             .addCase(login.pending, handlePending)
-            .addCase(login.fulfilled, handleFulfilled)
+            .addCase(login.fulfilled, handleLoginFulfilled)
             .addCase(login.rejected, handleRejected)
             .addCase(register.pending, handlePending)
-            .addCase(register.fulfilled, handleFulfilled)
+            .addCase(register.fulfilled, handleRegisterFulfilled)
             .addCase(register.rejected, handleRejected)
     }
 });
