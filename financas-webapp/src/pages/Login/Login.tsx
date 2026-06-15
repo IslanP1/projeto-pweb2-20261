@@ -1,25 +1,40 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import type { AppDispatch } from '../../app/store';
 import { login } from '../../features/auth/authThunks';
 import {
     selectAuthStatus,
     selectAuthError,
-    selectUser,
 } from '../../features/auth/authSelectors';
 
 export default function Login() {
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const status = useSelector(selectAuthStatus);
     const error = useSelector(selectAuthError);
-    const user = useSelector(selectUser);
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = () => {
-        dispatch(login({ username, password }));
+    const handleSubmit = async () => {
+        const result = await dispatch(login({ username, password }));
+        if (login.fulfilled.match(result)) {
+            navigate('/');
+        }
     };
+
+    const isLoading = status === 'loading';
+
+    let buttonText = 'Entrar';
+    if (isLoading) {
+        buttonText = 'Entrando...';
+    }
+
+    let errorMessage = null;
+    if (error) {
+        errorMessage = <p style={{ color: 'red' }}>erro: {error}</p>;
+    }
 
     return (
         <div>
@@ -33,13 +48,11 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-            <button onClick={handleSubmit} disabled={status === 'loading'}>
-                {status === 'loading' ? 'Entrando...' : 'Entrar'}
+            <button onClick={handleSubmit} disabled={isLoading}>
+                {buttonText}
             </button>
 
-            <p>status: {status}</p>
-            {error && <p style={{ color: 'red' }}>erro: {error}</p>}
-            {user && <p style={{ color: 'green' }}>logado: {user.name}</p>}
+            {errorMessage}
         </div>
     );
 }
