@@ -5,7 +5,7 @@ import Home from "./pages/Home/Home";
 import TransactionList from "./pages/Transactions/TransactionList";
 import CreateTransaction from "./pages/Transactions/CreateTransaction";
 import Relatorio from "./pages/Relatorio/Relatorio";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./routes/ProtectedRoute";
 import MainLayout from "./components/Menu/MainLayout";
 
 export default function App() {
