@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
+    FiBarChart2,
     FiDollarSign,
     FiHome,
     FiLogOut,
@@ -14,21 +15,10 @@ import { selectUser } from "../../features/auth/authSelectors";
 import { logout } from "../../features/auth/authSlice";
 
 const menu = [
-    {
-        name: "Dashboard",
-        path: "/",
-        icon: FiHome,
-    },
-    {
-        name: "Transações",
-        path: "/transactions",
-        icon: FiDollarSign,
-    },
-    {
-        name: "Nova Transação",
-        path: "/transactions/new",
-        icon: FiPlusCircle,
-    },
+    { name: "Dashboard", path: "/", icon: FiHome },
+    { name: "Transações", path: "/transactions", icon: FiDollarSign },
+    { name: "Nova Transação", path: "/transactions/new", icon: FiPlusCircle },
+    { name: "Relatórios", path: "/relatorio", icon: FiBarChart2 },
 ];
 
 export default function Navbar() {
@@ -51,16 +41,12 @@ export default function Navbar() {
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white">
                             <FiDollarSign className="text-xl text-emerald-700" />
                         </div>
-
-                        <div>
-                            <p className="text-xs text-emerald-100">Controle Financeiro</p>
-                        </div>
+                        <p className="text-xs text-emerald-100">Controle Financeiro</p>
                     </div>
 
                     <nav className="hidden items-center gap-8 md:flex">
                         {menu.map((item) => {
                             const Icon = item.icon;
-
                             return (
                                 <NavLink
                                     key={item.path}
@@ -82,8 +68,7 @@ export default function Navbar() {
 
                     <button
                         onClick={handleLogout}
-                        className="group hidden items-center gap-2 px-2 py-2 text-white/80 transition hover:text-white/100 cursor-pointer rounded md:flex duration-300 border-b-2 border-transparent hover:border-white"
-
+                        className="group hidden items-center gap-2 rounded border-b-2 border-transparent px-2 py-2 text-white/80 transition duration-300 hover:border-white hover:text-white/100 cursor-pointer md:flex"
                     >
                         <FiLogOut />
                         Sair
@@ -120,22 +105,19 @@ function MobileMenu({
     onLogout: () => void;
     userName: string;
 }) {
-    if (!open) {
-        return null;
-    }
+    if (!open) return null;
 
     return (
         <div className="fixed inset-0 z-40 bg-black/40 md:hidden" onClick={onClose}>
             <aside
                 className="ml-auto flex h-full w-72 flex-col bg-emerald-900 px-6 py-5 shadow-2xl"
-                onClick={(event) => event.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
             >
                 <div className="mb-8 flex items-start justify-between gap-4">
                     <div>
                         <p className="text-sm text-emerald-200">Olá,</p>
                         <h2 className="font-semibold text-white">{userName}</h2>
                     </div>
-
                     <button
                         onClick={onClose}
                         className="rounded-lg p-2 text-white transition hover:bg-white/10"
@@ -148,7 +130,6 @@ function MobileMenu({
                 <nav className="flex flex-1 flex-col gap-3">
                     {menu.map((item) => {
                         const Icon = item.icon;
-
                         return (
                             <NavLink
                                 key={item.path}
@@ -169,9 +150,10 @@ function MobileMenu({
                     })}
                 </nav>
 
+                {/* Botão Sair: tom verde, fundo transparente ao hover */}
                 <button
                     onClick={onLogout}
-                    className="mt-6 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-white transition hover:bg-red-100"
+                    className="mt-6 flex items-center justify-center gap-2 rounded-xl border border-emerald-700 px-4 py-3 text-emerald-300 transition hover:bg-white/10 hover:text-emerald-100"
                 >
                     <FiLogOut />
                     Sair

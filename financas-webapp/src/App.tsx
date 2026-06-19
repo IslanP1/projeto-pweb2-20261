@@ -4,6 +4,7 @@ import Login from "./pages/Login/Login";
 import Home from "./pages/Home/Home";
 import TransactionList from "./pages/Transactions/TransactionList";
 import CreateTransaction from "./pages/Transactions/CreateTransaction";
+import Relatorio from "./pages/Relatorio/Relatorio";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MainLayout from "./components/Menu/MainLayout";
 
@@ -15,9 +16,10 @@ export default function App() {
 
       <Route element={<ProtectedRoute />}>
         <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/transactions" element={<TransactionList />} />
-            <Route path="/transactions/new" element={<CreateTransaction />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/transactions" element={<TransactionList />} />
+          <Route path="/transactions/new" element={<CreateTransaction />} />
+          <Route path="/relatorio" element={<Relatorio />} />
         </Route>
       </Route>
     </Routes>
