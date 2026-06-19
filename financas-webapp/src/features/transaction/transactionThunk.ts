@@ -27,5 +27,16 @@ const fetchTransactions = createAsyncThunk(
     }
 );
 
+const fetchDashboardTransactions = createAsyncThunk(
+    'transactions/fetchDashboard',
+    async (_: void, { getState, rejectWithValue }) => {
+        try {
+            const token = (getState() as RootState).auth.token;
+            return await transactionService.fetchForDashboard(token!);
+        } catch (e) {
+            return rejectWithValue((e as Error).message);
+        }
+    }
+);
 
-export { create, fetchTransactions };
+export { create, fetchTransactions, fetchDashboardTransactions };

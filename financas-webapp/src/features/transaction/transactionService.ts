@@ -46,6 +46,13 @@ const transactionService = {
         );
     },
 
+    fetchForDashboard(token: string) {
+        return api.get<Page<Transaction>>(
+            `/transactions?page=0&size=200&sort=date,desc`,
+            token
+        );
+    },
+
 };
 
 export default transactionService;
