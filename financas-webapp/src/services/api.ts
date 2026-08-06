@@ -26,10 +26,11 @@ const api = {
             headers,
         });
 
-        const data = await response.json();
+        const raw = await response.text();
+        const data = raw ? JSON.parse(raw) : null;
 
         if (!response.ok) {
-            throw new Error(data.message || 'API request failed');
+            throw new Error(data?.message || 'API request failed');
         }
 
         return data as T;
@@ -37,15 +38,15 @@ const api = {
 
     get<T>(endpoint: string, token?: string): Promise<T> {
         return this.request<T>(
-            endpoint, 
-            { method: 'GET' }, 
+            endpoint,
+            { method: 'GET' },
             token
         );
     },
 
     post<T, B>(
-        endpoint: string, 
-        body: B, 
+        endpoint: string,
+        body: B,
         token?: string
     ): Promise<T> {
         return this.request<T>(
@@ -56,7 +57,15 @@ const api = {
             },
             token
         );
-    }
+    },
+
+    delete<T>(endpoint: string, token?: string): Promise<T> {
+        return this.request<T>(
+            endpoint,
+            { method: 'DELETE' },
+            token
+        );
+    },
 }
 
 export default api;

@@ -39,4 +39,16 @@ const fetchDashboardTransactions = createAsyncThunk(
     }
 );
 
-export { create, fetchTransactions, fetchDashboardTransactions };
+const fetchCategories = createAsyncThunk(
+    'transactions/fetchCategories',
+    async (_: void, { getState, rejectWithValue }) => {
+        try {
+            const token = (getState() as RootState).auth.token;
+            return await transactionService.fetchCategories(token!);
+        } catch (e) {
+            return rejectWithValue((e as Error).message);
+        }
+    }
+);
+
+export { create, fetchTransactions, fetchDashboardTransactions, fetchCategories };

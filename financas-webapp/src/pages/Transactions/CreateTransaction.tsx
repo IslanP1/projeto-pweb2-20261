@@ -1,10 +1,19 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import type { AppDispatch } from '../../app/store';
+import { FiAlertTriangle } from 'react-icons/fi';
+import type { AppDispatch, RootState } from '../../app/store';
 import { create } from '../../features/transaction/transactionThunk';
-import { selectCategories, selectTransactionStatus, selectTransactionError } from '../../features/transaction/transactionSelectors';
+import { selectCategories, selectTransactionStatus, selectTransactionError, selectDashboardStatus } from '../../features/transaction/transactionSelectors';
+import { fetchDashboardTransactions } from '../../features/transaction/transactionThunk';
 import type { TransactionType } from '../../features/transaction/transactionService';
+import { fetchSpendingLimits } from '../../features/spendingLimit/spendingLimitThunks';
+import { selectSpendingStatus, selectSpendingStatusForCategory } from '../../features/spendingLimit/spendingLimitSelectors';
+import { notifyViaServiceWorker } from '../../services/notifications';
+
+function formatCurrency(value: number) {
+    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
 
 const inputClass =
     'w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent';
@@ -13,11 +22,13 @@ const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
 
 export default function CreateTransaction() {
     const dispatch = useDispatch<AppDispatch>();
+    const store = useStore<RootState>();
     const navigate = useNavigate();
 
     const categories = useSelector(selectCategories);
     const status = useSelector(selectTransactionStatus);
     const error = useSelector(selectTransactionError);
+    const dashboardStatus = useSelector(selectDashboardStatus);
 
     const today = new Date().toISOString().split('T')[0];
     const [amount, setAmount] = useState('');
@@ -29,18 +40,56 @@ export default function CreateTransaction() {
 
     const isLoading = status === 'loading';
 
+    const limitStatus = useSelector(
+        selectSpendingStatusForCategory(type === 'EXPENSE' ? parseInt(categoryId) : null)
+    );
+    const limitReached = !!limitStatus && limitStatus.percentUsed >= 100;
+
+    useEffect(() => {
+        dispatch(fetchSpendingLimits());
+        if (dashboardStatus === 'idle') {
+            dispatch(fetchDashboardTransactions());
+        }
+    }, [dispatch, dashboardStatus]);
+
     const handleSubmit = async (e: { preventDefault(): void }) => {
         e.preventDefault();
+        const parsedAmount = parseFloat(amount);
+        const parsedCategoryId = parseInt(categoryId);
+
         const result = await dispatch(create({
-            amount: parseFloat(amount),
+            amount: parsedAmount,
             type,
-            categoryId: parseInt(categoryId),
+            categoryId: parsedCategoryId,
             date,
             description: description || undefined,
             tag: tag || undefined,
         }));
+
         if (create.fulfilled.match(result)) {
+            if (type === 'EXPENSE') {
+                // Refetch instead of trusting the limits/transactions loaded on mount: those
+                // requests may still be in flight if the user submits quickly, which would
+                // silently skip the notification below.
+                notifyIfLimitReached(parsedCategoryId);
+            }
             navigate('/transactions');
+        }
+    };
+
+    const notifyIfLimitReached = async (categoryId: number) => {
+        await Promise.all([
+            dispatch(fetchSpendingLimits()),
+            dispatch(fetchDashboardTransactions()),
+        ]);
+
+        const current = selectSpendingStatus(store.getState()).find((s) => s.categoryId === categoryId);
+        if (current && current.percentUsed >= 80) {
+            notifyViaServiceWorker({
+                title: 'Limite de gastos',
+                body: `Você já usou ${current.percentUsed.toFixed(0)}% do limite de ${current.categoryName} este mês (${formatCurrency(current.spent)} de ${formatCurrency(current.limitAmount)}).`,
+                tag: `spending-limit-${categoryId}`,
+            });
         }
     };
 
@@ -128,6 +177,15 @@ export default function CreateTransaction() {
                         className={inputClass}
                     />
                 </div>
+
+                {limitReached && (
+                    <div className="flex items-start gap-2 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+                        <FiAlertTriangle className="mt-0.5 shrink-0" />
+                        <span>
+                            Você já atingiu o limite mensal de {limitStatus?.categoryName} ({formatCurrency(limitStatus?.spent ?? 0)} de {formatCurrency(limitStatus?.limitAmount ?? 0)}).
+                        </span>
+                    </div>
+                )}
 
                 {error && (
                     <p className="text-sm text-red-500">{error}</p>

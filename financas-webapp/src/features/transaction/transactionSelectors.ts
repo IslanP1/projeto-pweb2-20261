@@ -18,6 +18,9 @@ export const selectTotalPages = (state: RootState) =>
 export const selectCategories = (state: RootState) =>
     state.transactions.categories;
 
+export const selectCategoriesStatus = (state: RootState) =>
+    state.transactions.categoriesStatus;
+
 export const selectDashboardStatus = (state: RootState) =>
     state.transactions.dashboardStatus;
 

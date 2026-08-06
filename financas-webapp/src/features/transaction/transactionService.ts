@@ -53,6 +53,10 @@ const transactionService = {
         );
     },
 
+    fetchCategories(token: string) {
+        return api.get<{ id: number; name: string }[]>('/categories', token);
+    },
+
 };
 
 export default transactionService;

@@ -10,6 +10,7 @@ import {
     FiPlusCircle,
     FiX,
     FiTarget,
+    FiShield,
 } from "react-icons/fi";
 
 import { selectUser } from "../../features/auth/authSelectors";
@@ -21,6 +22,7 @@ const menu = [
     { name: "Nova Transação", path: "/transactions/new", icon: FiPlusCircle },
     { name: "Relatórios", path: "/relatorio", icon: FiBarChart2 },
     { name: "Metas", path: "/goals", icon: FiTarget },
+    { name: "Limites de Gastos", path: "/spending-limits", icon: FiShield },
 ];
 
 export default function Navbar() {

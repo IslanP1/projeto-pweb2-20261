@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { store } from './app/store';
 import App from './App';
+import { requestNotificationPermission } from './services/notifications';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -15,3 +16,16 @@ createRoot(document.getElementById('root')!).render(
         </Provider>
     </StrictMode>
 );
+
+function registerServiceWorker() {
+    navigator.serviceWorker.register('/sw.js');
+    requestNotificationPermission();
+}
+
+if ('serviceWorker' in navigator) {
+    if (document.readyState === 'complete') {
+        registerServiceWorker();
+    } else {
+        window.addEventListener('load', registerServiceWorker);
+    }
+}

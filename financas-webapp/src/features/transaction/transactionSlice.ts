@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchTransactions, create, fetchDashboardTransactions } from "./transactionThunk";
+import { fetchTransactions, create, fetchDashboardTransactions, fetchCategories } from "./transactionThunk";
 import type { Transaction } from "./transactionService";
 
 export interface Category {
@@ -25,6 +25,7 @@ interface TransactionState {
     categories: Category[];
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     dashboardStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
+    categoriesStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
     currentPage: number;
     totalPages: number;
@@ -36,6 +37,7 @@ const initialState: TransactionState = {
     categories: CATEGORIES,
     status: 'idle',
     dashboardStatus: 'idle',
+    categoriesStatus: 'idle',
     error: null,
     currentPage: 0,
     totalPages: 0,
@@ -81,6 +83,16 @@ const transactionSlice = createSlice({
             })
             .addCase(fetchDashboardTransactions.rejected, (state) => {
                 state.dashboardStatus = 'failed';
+            })
+            .addCase(fetchCategories.pending, (state) => {
+                state.categoriesStatus = 'loading';
+            })
+            .addCase(fetchCategories.fulfilled, (state, action) => {
+                state.categoriesStatus = 'succeeded';
+                state.categories = action.payload;
+            })
+            .addCase(fetchCategories.rejected, (state) => {
+                state.categoriesStatus = 'failed';
             });
     },
 });
