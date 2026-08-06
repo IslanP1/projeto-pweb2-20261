@@ -29,24 +29,41 @@ Altere os scripts dentro do diretório `src/main/resources/db/migration` caso qu
 
 ## Executando o frontend
 
-Cada grupo deve preencher essa seção. Na versão inicial, o projeto é executado com os seguintes comandos:
+O projeto de frontend é composto por duas aplicações:
 
-1. Navegue até a pasta `financas-webapp`:
+- `financas-webapp` — aplicação principal (shell), com todas as telas (RF01 a RF06)
+- `financas-mfe-cotacoes` — microfrontend de Cotações/Conversor de moedas (RF07), carregado em tempo de execução pelo shell via **Module Federation**
 
-   ```bash
-   cd financas-webapp
-   ```
+### 1. Aplicação principal (`financas-webapp`)
 
-2. Instale as dependências do projeto:
+```bash
+cd financas-webapp
+npm install
+npm run dev
+```
 
-   ```bash
-   npm install
-   ```
+Estará disponível em `http://localhost:5173`.
 
-3. Inicie a aplicação frontend:
+### 2. Microfrontend de Cotações (`financas-mfe-cotacoes`)
 
-   ```bash
-   npm run dev
-   ```
+Necessário apenas para visualizar a tela `/cotacoes` (RF07) — o restante da aplicação funciona normalmente sem ele.
 
-O frontend estará disponível em `http://localhost:5173`.
+```bash
+cd financas-mfe-cotacoes
+npm install
+npm run dev
+```
+
+Estará disponível em `http://localhost:5174` (também pode ser acessado isoladamente, fora do shell). O shell consome o módulo em tempo real a partir de `http://localhost:5174/remoteEntry.js`; se essa aplicação não estiver rodando, a tela `/cotacoes` exibe um aviso de módulo indisponível em vez de quebrar o restante do app.
+
+### Testes automatizados
+
+```bash
+cd financas-webapp
+npm test          # roda a suíte Vitest uma vez
+npm run test:watch  # modo watch
+```
+
+### Build de produção
+
+Cada aplicação tem seu próprio build (`npm run build`) e pode ser publicada separadamente. Ao publicar em produção, atualize a URL do `remoteEntry.js` do `financas-mfe-cotacoes` na configuração de federation de `financas-webapp/vite.config.ts` (hoje fixa em `http://localhost:5174`).
