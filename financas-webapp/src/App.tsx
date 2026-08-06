@@ -8,6 +8,7 @@ import Relatorio from "./pages/Relatorio/Relatorio";
 import GoalsList from "./pages/Goals/GoalsList";
 import GoalForm from "./pages/Goals/GoalForm";
 import SpendingLimits from "./pages/SpendingLimits/SpendingLimits";
+import Cotacoes from "./pages/Cotacoes/Cotacoes";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import MainLayout from "./components/Menu/MainLayout";
 
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/goals" element={<GoalsList />} />
           <Route path="/goals/new" element={<GoalForm />} />
           <Route path="/spending-limits" element={<SpendingLimits />} />
+          <Route path="/cotacoes" element={<Cotacoes />} />
         </Route>
       </Route>
     </Routes>

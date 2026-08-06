@@ -11,6 +11,7 @@ import {
     FiX,
     FiTarget,
     FiShield,
+    FiRefreshCw,
 } from "react-icons/fi";
 
 import { selectUser } from "../../features/auth/authSelectors";
@@ -23,6 +24,7 @@ const menu = [
     { name: "Relatórios", path: "/relatorio", icon: FiBarChart2 },
     { name: "Metas", path: "/goals", icon: FiTarget },
     { name: "Limites de Gastos", path: "/spending-limits", icon: FiShield },
+    { name: "Cotações", path: "/cotacoes", icon: FiRefreshCw },
 ];
 
 export default function Navbar() {

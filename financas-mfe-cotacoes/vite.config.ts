@@ -1,22 +1,16 @@
-/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
 import { federation } from '@module-federation/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    tailwindcss(),
     react(),
     federation({
-      name: 'financas_webapp',
-      remotes: {
-        financas_mfe_cotacoes: {
-          type: 'module',
-          name: 'financas_mfe_cotacoes',
-          entry: 'http://localhost:5174/remoteEntry.js',
-        },
+      name: 'financas_mfe_cotacoes',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './CotacoesWidget': './src/CotacoesWidget.tsx',
       },
       shared: {
         react: { singleton: true, requiredVersion: false },
@@ -27,9 +21,17 @@ export default defineConfig({
   ],
   build: {
     target: 'esnext',
+    cssCodeSplit: false,
+    modulePreload: false,
   },
-  test: {
-    environment: 'jsdom',
-    setupFiles: ['./src/setupTests.ts'],
+  server: {
+    port: 5174,
+    strictPort: true,
+    cors: true,
+  },
+  preview: {
+    port: 5174,
+    strictPort: true,
+    cors: true,
   },
 })
